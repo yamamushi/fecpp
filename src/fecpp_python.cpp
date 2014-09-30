@@ -34,7 +34,7 @@ boost::python::list fec_encode(fec_code* code,
 
    code->encode(reinterpret_cast<const byte*>(input.c_str()),
                 input.size(),
-                std::tr1::ref(fec_saver));
+                std::ref(fec_saver));
 
    return fec_saver.get_results();
    }
@@ -67,17 +67,16 @@ boost::python::list fec_decode(fec_code* code,
 
    save_results fec_saver(code->get_K());
 
-   code->decode(shares, share_size, std::tr1::ref(fec_saver));
+   code->decode(shares, share_size, std::ref(fec_saver));
 
    return fec_saver.get_results();
    }
 
 BOOST_PYTHON_MODULE(fecpp)
    {
-   boost::python::class_<fec_code>
-      ("fec_code", boost::python::init<size_t, size_t>())
-      .def("encode", fec_encode)
-      .def("decode", fec_decode)
-      .add_property("K", &fec_code::get_K)
-      .add_property("N", &fec_code::get_N);
+   boost::python::class_<fec_code>("fec_code", boost::python::init<size_t, size_t>());
+      //.def("encode", fec_encode)
+      //.def("decode", fec_decode)
+      //.add_property("K", &fec_code::get_K)
+      //.add_property("N", &fec_code::get_N);
    }

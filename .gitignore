@@ -7,3 +7,20 @@ tests.txt
 *.o
 *.a
 *.so
+
+# CLion IDE files
+.idea/
+
+# Apple Stuff
+xcuserdata/
+*.xcodeproj
+.DS_Store
+
+CMakeFiles/
+*CMakeFiles/*
+CMakeCache.txt
+*Makefile
+*cmake_install.cmake
+*.swp
+build/
+

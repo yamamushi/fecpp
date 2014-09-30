@@ -1,0 +1,9 @@
+The original source of fecpp can be found here:
+
+https://github.com/randombit/fecpp
+
+This fork is only a translation of the original project to CMake for inclusion in other CMake projects properly.
+
+I have also removed references to std::tr1 .
+
+- Yamamushi 

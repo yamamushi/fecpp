@@ -12,13 +12,14 @@
 
 #include <map>
 #include <vector>
-#include <tr1/functional>
+#include <functional>
 
 namespace fecpp {
 
 using std::size_t;
 
 typedef unsigned char byte;
+typedef unsigned long u_long;
 
 /**
 * Forward error correction code
@@ -43,7 +44,7 @@ class fec_code
       */
       void encode(
          const byte input[], size_t size,
-         std::tr1::function<void (size_t, size_t, const byte[], size_t)> out)
+         std::function<void (size_t, size_t, const byte[], size_t)> out)
          const;
 
       /**
@@ -53,7 +54,7 @@ class fec_code
       */
       void decode(
          const std::map<size_t, const byte*>& shares, size_t share_size,
-         std::tr1::function<void (size_t, size_t, const byte[], size_t)> out)
+         std::function<void (size_t, size_t, const byte[], size_t)> out)
          const;
 
    private:

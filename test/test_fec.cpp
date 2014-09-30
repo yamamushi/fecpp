@@ -50,21 +50,21 @@ typedef unsigned short u_short ;
 	t = x.tv_usec + 1000000* (x.tv_sec & 0xff ) ; \
 	}
 #define TOCK(t) \
-	{ u_long t1 ; TICK(t1) ; \
+	{ fecpp::u_long t1 ; TICK(t1) ; \
 	  if (t1 < t) t = 256000000 + t1 - t ; \
 	  else t = t1 - t ; \
 	  if (t == 0) t = 1 ;}
 
-u_long ticks[10];	/* vars for timekeeping */
+fecpp::u_long ticks[10];	/* vars for timekeeping */
 
 void *
 my_malloc(int sz, const char *s)
 {
     void *p = malloc(sz) ;
     if (p != NULL)
-	return p ;
+        return p ;
     fprintf(stderr, "test: malloc failure for %d bytes in <%s>\n",
-	sz, s);
+            sz, s);
     exit(1);
 }
 
@@ -77,65 +77,65 @@ my_malloc(int sz, const char *s)
  */
 
 int
-test_decode(fec_code& code, size_t k, size_t index[], size_t sz,
-            const char *s)
+test_decode(fecpp::fec_code& code, size_t k, size_t index[], size_t sz,
+        const char *s)
 {
     int errors;
     int reconstruct = 0 ;
     int item, i ;
 
     static size_t prev_k = 0, prev_sz = 0;
-    static byte **d_original = NULL, **d_src = NULL ;
+    static fecpp::byte **d_original = NULL, **d_src = NULL ;
 
     if (sz < 1 || sz > 8192) {
-	fprintf(stderr, "test_decode: size %d invalid, must be 1..8K\n",
-		sz);
-	return 1 ;
+        fprintf(stderr, "test_decode: size %d invalid, must be 1..8K\n",
+                sz);
+        return 1 ;
     }
     if (k < 1 || k > 255 + 1) {
-	fprintf(stderr, "test_decode: k %d invalid, must be 1..%d\n",
-		k, 255 + 1 );
-	return 2 ;
+        fprintf(stderr, "test_decode: k %d invalid, must be 1..%d\n",
+                k, 255 + 1 );
+        return 2 ;
     }
     if (prev_k != k || prev_sz != sz) {
-	if (d_original != NULL) {
-	    for (i = 0 ; i < prev_k ; i++ ) {
-		free(d_original[i]);
-		free(d_src[i]);
-	    }
-	    free(d_original);
-	    free(d_src);
-	    d_original = NULL ;
-	    d_src = NULL ;
-	}
+        if (d_original != NULL) {
+            for (i = 0 ; i < prev_k ; i++ ) {
+                free(d_original[i]);
+                free(d_src[i]);
+            }
+            free(d_original);
+            free(d_src);
+            d_original = NULL ;
+            d_src = NULL ;
+        }
     }
     prev_k = k ;
     prev_sz = sz ;
     if (d_original == NULL) {
-        d_original = (byte**)my_malloc(k * sizeof(byte *), "d_original ptr");
-	d_src = (byte**)my_malloc(k * sizeof(void *), "d_src ptr");
+        d_original = (fecpp::byte**)my_malloc(k * sizeof(fecpp::byte *), "d_original ptr");
+        d_src = (fecpp::byte**)my_malloc(k * sizeof(void *), "d_src ptr");
 
-	for (i = 0 ; i < k ; i++ ) {
-           d_original[i] = (byte*)my_malloc(sz, "d_original data");
-           d_src[i] = (byte*)my_malloc(sz, "d_src data");
-	}
-	/*
-	 * build sample data
-	 */
-	for (i = 0 ; i < k ; i++ ) {
-	    for (item=0; item < sz; item++)
-		d_original[i][item] = ((item ^ i) + 3) & 255;
-	}
+        for (i = 0 ; i < k ; i++ ) {
+            d_original[i] = (fecpp::byte*)my_malloc(sz, "d_original data");
+            d_src[i] = (fecpp::byte*)my_malloc(sz, "d_src data");
+        }
+        /*
+         * build sample data
+         */
+        for (i = 0 ; i < k ; i++ ) {
+            for (item=0; item < sz; item++)
+                d_original[i][item] = ((item ^ i) + 3) & 255;
+        }
     }
 
     errors = 0 ;
 
     for( i = 0 ; i < k ; i++ )
-	if (index[i] >= k ) reconstruct ++ ;
+        if (index[i] >= k ) reconstruct ++ ;
 
     TICK(ticks[2]);
     for( i = 0 ; i < k ; i++ )
-       code.encode(d_original, d_src[i], index[i], sz );
+        code.encode(d_original, d_src[i], index[i], sz);
     TOCK(ticks[2]);
 
     TICK(ticks[1]);
@@ -143,19 +143,19 @@ test_decode(fec_code& code, size_t k, size_t index[], size_t sz,
     TOCK(ticks[1]);
 
     for (i=0; i<k; i++)
-	if (bcmp(d_original[i], d_src[i], sz )) {
-	    errors++;
-	    fprintf(stderr, "error reconstructing block %d\n", i);
-	}
+        if (bcmp(d_original[i], d_src[i], sz )) {
+            errors++;
+            fprintf(stderr, "error reconstructing block %d\n", i);
+        }
     if (errors)
-	fprintf(stderr, "Errors reconstructing %d blocks out of %d\n",
-	    errors, k);
+        fprintf(stderr, "Errors reconstructing %d blocks out of %d\n",
+                errors, k);
 
     fprintf(stderr,
-	"  k %3d, l %3d  c_enc %10.6f MB/s c_dec %10.6f MB/s     \r",
-	k, reconstruct,
-	(double)(k * sz * reconstruct)/(double)ticks[2],
-	(double)(k * sz * reconstruct)/(double)ticks[1]);
+            "  k %3d, l %3d  c_enc %10.6f MB/s c_dec %10.6f MB/s     \r",
+            k, reconstruct,
+            (double)(k * sz * reconstruct)/(double)ticks[2],
+            (double)(k * sz * reconstruct)/(double)ticks[1]);
 
     return errors ;
 }
@@ -205,57 +205,57 @@ main(int argc, char *argv[])
 #endif
 
     for ( kk = KK ; kk > 2 ; kk-- )
-       {
-       fec_code code(kk, lim);
-       ixs = (size_t*)my_malloc(kk * sizeof(size_t), "ixs" );
+    {
+        fecpp::fec_code code(kk, lim);
+        ixs = (size_t*)my_malloc(kk * sizeof(size_t), "ixs" );
 
-       for (i=0; i<kk; i++) ixs[i] = kk - i ;
-       sprintf(buf, "kk=%d, kk - i", kk);
-       test_decode(code, kk, ixs, SZ, buf);
+        for (i=0; i<kk; i++) ixs[i] = kk - i ;
+        sprintf(buf, "kk=%d, kk - i", kk);
+        test_decode(code, kk, ixs, SZ, buf);
 
-       for (i=0; i<kk; i++) ixs[i] = i ;
-       test_decode(code, kk, ixs, SZ, "i");
+        for (i=0; i<kk; i++) ixs[i] = i ;
+        test_decode(code, kk, ixs, SZ, "i");
 
-       if (0)
-          {
-          for (i=0; i<kk; i++) ixs[i] = i ;
-          ixs[0] = ixs[kk/2] ;
-          test_decode(code, kk, ixs, SZ, "0 = 1 (error expected)");
-          }
+        if (0)
+        {
+            for (i=0; i<kk; i++) ixs[i] = i ;
+            ixs[0] = ixs[kk/2] ;
+            test_decode(code, kk, ixs, SZ, "0 = 1 (error expected)");
+        }
 
-       if (0)
-          for (i= lim-1 ; i >= kk ; i--)
-             {
-             int j ;
-             for (j=0; j<KK; j++) ixs[j] = kk - j ;
-             ixs[0] = i ;
-             test_decode(code, kk, ixs, SZ, "0 = big");
-             }
+        if (0)
+            for (i= lim-1 ; i >= kk ; i--)
+            {
+                int j ;
+                for (j=0; j<KK; j++) ixs[j] = kk - j ;
+                ixs[0] = i ;
+                test_decode(code, kk, ixs, SZ, "0 = big");
+            }
 
-       if (1)
-          for (i= lim - kk ; i >= 0 && i>= lim - kk - 4 ; i--)
-             {
-             int j ;
-             for (j=0; j<kk; j++)
-                ixs[j] = kk -1 - j + i ;
-             test_decode(code, kk, ixs, SZ, "shifted j");
-             }
+        if (1)
+            for (i= lim - kk ; i >= 0 && i>= lim - kk - 4 ; i--)
+            {
+                int j ;
+                for (j=0; j<kk; j++)
+                    ixs[j] = kk -1 - j + i ;
+                test_decode(code, kk, ixs, SZ, "shifted j");
+            }
 
-       if (1)
-          {
-          int j, max_i0 = KK/2 ;
-          if (max_i0 + KK > lim)
-             max_i0 = lim - KK ;
-          for (i= 0 ; i <= max_i0 ; i++)
-             {
-             for (j=0; j<kk; j++)
-                ixs[j] = j + i ;
-             test_decode(code, kk, ixs, SZ, "shifted j");
-             }
-          }
+        if (1)
+        {
+            int j, max_i0 = KK/2 ;
+            if (max_i0 + KK > lim)
+                max_i0 = lim - KK ;
+            for (i= 0 ; i <= max_i0 ; i++)
+            {
+                for (j=0; j<kk; j++)
+                    ixs[j] = j + i ;
+                test_decode(code, kk, ixs, SZ, "shifted j");
+            }
+        }
 
-       fprintf(stderr, "\n");
-       free(ixs);
-       }
+        fprintf(stderr, "\n");
+        free(ixs);
+    }
     return 0;
 }
