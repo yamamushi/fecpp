@@ -15,18 +15,10 @@ target_link_libraries(${NAME}
   ${PYTHON_LIBRARY}
 )
 
-#SET_TARGET_PROPERTIES(${NAME} PROPERTIES LINK_FLAGS "-lboost_python -L/usr/lib/python2.7/config -lpython2.7")
 
-if (APPLE)
-    set_property(TARGET ${NAME} PROPERTY PREFIX "lib")
-    set_property(TARGET ${NAME} PROPERTY OUTPUT_NAME "fecpp.so")
-    set_property(TARGET ${NAME} PROPERTY SUFFIX "")
-endif()
+add_library(${NAME}-static STATIC ${SRC} )
 
-
-#add_library(${NAME}-static STATIC ${SRC} )
-
-#target_link_libraries(${NAME}-static
-#  ${Boost_LIBRARIES}
-#  ${PYTHON_LIBRARIES}
-#)
+target_link_libraries(${NAME}-static
+  ${Boost_LIBRARIES}
+  ${PYTHON_LIBRARIES}
+)
