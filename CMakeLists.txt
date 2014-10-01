@@ -76,7 +76,8 @@ endif()
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED OFF)
-find_package(Boost 1.53 COMPONENTS python)
+set(Boost_COMPONENTS system python )
+find_package(Boost 1.53 REQUIRED ${Boost_COMPONENTS})
 find_package(PythonLibs 2.7 REQUIRED)
 
 
