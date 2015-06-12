@@ -22,3 +22,6 @@ target_link_libraries(${NAME}-static
   ${Boost_LIBRARIES}
   ${PYTHON_LIBRARIES}
 )
+
+set_target_properties(${NAME}-static PROPERTIES OUTPUT_NAME ${NAME})
+
